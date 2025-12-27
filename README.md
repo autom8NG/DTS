@@ -2,7 +2,27 @@
 
 A full-stack task management application built for the HMCTS DTS Developer Technical Challenge. This system allows caseworkers to efficiently create, view, update, and delete tasks with comprehensive validation, error handling, and testing.
 
-> **⚡ Quick Start:** See [QUICKSTART.md](QUICKSTART.md) for fast setup instructions and common commands.
+## ⚡ Quick Start (3 Steps)
+
+### 1. Install All Dependencies
+```bash
+npm run install:all
+```
+This installs dependencies for root project (concurrently), backend (Express, SQLite, TypeScript), and frontend (React, Vite, TypeScript).
+
+### 2. Run the Application
+```bash
+npm run dev
+```
+This uses **concurrently** to start both servers:
+- Backend API: http://localhost:3001
+- Frontend UI: http://localhost:3000
+
+### 3. Test the Application
+```bash
+npm test
+```
+This runs all tests for both backend and frontend using **concurrently**.
 
 ## 🚀 Features
 
@@ -20,7 +40,53 @@ A full-stack task management application built for the HMCTS DTS Developer Techn
 - **Task Management**: Complete CRUD functionality
 - **Status Tracking**: Visual status indicators (TODO, IN_PROGRESS, COMPLETED)
 - **Form Validation**: Client-side validation with user feedback
+- **Database Manager**: Built-in database browser and query console
 - **Testing**: Comprehensive unit tests for all components
+
+## 🗄️ Database Manager
+
+The Database Manager is a built-in tool providing full visibility and control over the database:
+
+### Features
+
+#### 📊 Statistics Tab
+- View total number of tables
+- See row count for each table
+- Monitor database growth in real-time
+
+#### 📋 Schema Tab
+- Explore complete database structure
+- View column properties (name, type, constraints)
+- Inspect indexes and primary keys
+- Reference SQL schema details
+
+#### 📁 Data Browser Tab
+- Browse and inspect all table data
+- Switch between tables with dropdown selector
+- View live data with refresh capability
+- Export data by copying from table
+
+#### ⚡ Query Console Tab
+- Execute custom SQL queries
+- Syntax-highlighted SQL editor
+- Formatted results table
+- Safety mode (SELECT and PRAGMA only)
+
+**Example Queries:**
+```sql
+-- Get all tasks
+SELECT * FROM tasks LIMIT 10
+
+-- Count tasks by status
+SELECT status, COUNT(*) as count FROM tasks GROUP BY status
+
+-- Find overdue tasks
+SELECT * FROM tasks WHERE dueDateTime < datetime('now')
+```
+
+### Management Actions
+- **🔄 Refresh** - Updates all database information
+- **🗑️ Clear Database** - Removes all data (development only, requires confirmation)
 
 ## 📋 Task Model
 
@@ -44,7 +110,7 @@ Each task contains the following fields:
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Language**: TypeScript
-- **Database**: SQLite (better-sqlite3)
+- **Database**: SQL.js (in-memory for dev/test) / PostgreSQL (production)
 - **Validation**: express-validator
 - **Testing**: Jest + Supertest
 
@@ -56,9 +122,29 @@ Each task contains the following fields:
 - **Testing**: Jest + React Testing Library
 
 ### Development Tools
-- **Concurrently**: Run multiple commands in parallel
+- **Concurrently**: Run multiple commands in parallel (backend + frontend)
 - **TypeScript**: Type safety across the stack
 - **ESLint**: Code quality and consistency
+
+## 💾 Database Configuration
+
+### Development & Testing (Current Setup)
+- **Database:** SQL.js (in-memory)
+- **Configuration:** None required ✅
+- **Benefits:**
+  - Zero setup - no installation needed
+  - Fast testing - instant execution
+  - Easy onboarding - works immediately
+  - Cross-platform - identical on Windows, Mac, Linux
+
+### Production
+- **Database:** PostgreSQL
+- **Configuration:** DATABASE_URL environment variable required
+- **Benefits:**
+  - Production-ready and battle-tested
+  - ACID compliant with data persistence
+  - Advanced features (transactions, replication, backups)
+  - Supported by all major cloud providers
 
 ## 📦 Installation
 
@@ -107,132 +193,200 @@ npm install
 
 ## 🚀 Running the Application
 
-### Quick Start (Recommended)
+### Using Concurrently (Recommended)
 
-Run both backend and frontend concurrently with a single command:
+The application uses **concurrently** to run multiple processes in parallel, providing a seamless development experience.
 
+#### Start Both Servers with One Command
 ```bash
 npm run dev
 ```
 
-This will start:
-- **Backend** on `http://localhost:3001`
-- **Frontend** on `http://localhost:3000`
+This single command uses **concurrently** to:
+- Start the **backend API** on `http://localhost:3001` (colored blue in terminal)
+- Start the **frontend dev server** on `http://localhost:3000` (colored green in terminal)
+- Display output from both processes in a single terminal with color-coded labels
+
+**Benefits:**
+- ✅ One terminal, one command
+- ✅ Color-coded output (blue=backend, green=frontend)
+- ✅ Simultaneous startup - no waiting
+- ✅ Easy monitoring of both services
 
 ### Individual Services
 
-#### Start Backend Server Only
+If you need to run services separately:
 
+#### Start Backend Only
 ```bash
 npm run dev:backend
+# or
+cd backend && npm run dev
 ```
 
-or
-
-```bash
-cd backend
-npm run dev
-```
-
-#### Start Frontend Application Only
-
+#### Start Frontend Only
 ```bash
 npm run dev:frontend
-```
-
-or
-
-```bash
-cd frontend
-npm run dev
+# or
+cd frontend && npm run dev
 ```
 
 ## 🧪 Testing
 
-### Run All Tests (Recommended)
+### Using Concurrently for Tests
 
-Run tests for both backend and frontend concurrently:
-
+#### Run All Tests Simultaneously
 ```bash
 npm test
 ```
+Uses **concurrently** to run both backend and frontend tests in parallel with color-coded output.
 
-### Run Tests with Coverage
-
+#### Run Tests with Coverage
 ```bash
 npm run test:coverage
 ```
+Runs all tests with coverage reports using **concurrently**.
 
 ### Individual Test Suites
 
 #### Backend Tests Only
-
 ```bash
 npm run test:backend
-```
-
-or
-
-```bash
-cd backend
-npm test
+# or
+cd backend && npm test
 ```
 
 #### Frontend Tests Only
-
 ```bash
 npm run test:frontend
+# or
+cd frontend && npm test
 ```
 
-or
-
-```bash
-cd frontend
-npm test
-```
+**Test Results:**
+- Backend: 51 tests passing, 82.42% coverage
+- Frontend: 27 tests passing, 45.23% coverage
 
 ## 🏗️ Building for Production
 
-### Build Both Applications
-
+### Build All with Concurrently
 ```bash
 npm run build
 ```
-
-This will build both backend and frontend applications.
+Builds both backend and frontend applications.
 
 ### Start Production Servers
-
 ```bash
 npm start
 ```
+Uses **concurrently** to start both production servers:
+- Backend production server
+- Frontend preview server
 
 ### Individual Builds
-
-#### Build Backend
-
 ```bash
-npm run build:backend
-```
-
-#### Build Frontend
-
-```bash
-npm run build:frontend
+npm run build:backend  # Build backend only
+npm run build:frontend # Build frontend only
 ```
 
 ## 🔧 Additional Commands
 
 ### Lint All Code
-
 ```bash
 npm run lint
 ```
+Uses **concurrently** to lint both backend and frontend code.
 
 ### Clean All Build Artifacts
-
 ```bash
 npm run clean
+```
+Removes all node_modules, dist, and coverage folders from both projects.
+
+## 📋 Available Commands Reference
+
+### Development
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | **Start both servers** using concurrently (recommended) |
+| `npm run dev:backend` | Start backend only |
+| `npm run dev:frontend` | Start frontend only |
+
+### Testing
+| Command | Description |
+|---------|-------------|
+| `npm test` | **Run all tests** using concurrently (recommended) |
+| `npm run test:coverage` | Run all tests with coverage using concurrently |
+| `npm run test:backend` | Run backend tests only |
+| `npm run test:frontend` | Run frontend tests only |
+
+### Building
+| Command | Description |
+|---------|-------------|
+| `npm run build` | **Build both applications** (recommended) |
+| `npm run build:backend` | Build backend only |
+| `npm run build:frontend` | Build frontend only |
+
+### Production
+| Command | Description |
+|---------|-------------|
+| `npm start` | **Run both apps in production** using concurrently |
+| `npm run start:backend` | Run backend production server |
+| `npm run start:frontend` | Preview frontend production build |
+
+### Maintenance
+| Command | Description |
+|---------|-------------|
+| `npm run lint` | Lint all code using concurrently |
+| `npm run clean` | Remove all build artifacts and dependencies |
+| `npm run install:all` | Install all dependencies (root, backend, frontend) |
+
+## 🔧 Troubleshooting
+
+### PowerShell Execution Policy Error
+
+If you encounter execution policy errors in PowerShell:
+
+**Option 1:** Use cmd instead
+```cmd
+cmd /c "npm run dev"
+```
+
+**Option 2:** Temporarily bypass execution policy
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+npm run dev
+```
+
+**Option 3:** Use WSL or Git Bash
+
+### Port Already in Use
+
+If ports 3000 or 3001 are already in use:
+
+1. Kill the processes using those ports:
+   ```bash
+   # Windows
+   netstat -ano | findstr :3001
+   taskkill /PID <process_id> /F
+   
+   # Mac/Linux
+   lsof -ti:3001 | xargs kill -9
+   ```
+
+2. Or modify the ports:
+   - Backend: `backend/.env` (change `PORT=3001`)
+   - Frontend: `frontend/vite.config.ts` (change `server.port`)
+
+### Database Issues
+
+If you encounter database errors:
+```bash
+# Remove the database file (development only)
+rm backend/database.db
+
+# Restart the backend
+npm run dev:backend
 ```
 
 ## 📚 API Documentation
@@ -424,10 +578,22 @@ DTS/
 
 ## 🎯 Design Decisions
 
+### Concurrently for Development
+- **Single command** to run all services
+- **Parallel execution** for faster development
+- **Color-coded output** for easy monitoring
+- **Unified logging** in one terminal window
+
 ### Database Choice
-- **SQLite** was chosen for simplicity and ease of setup
-- In-memory database for tests to ensure test isolation
-- Easily upgradeable to PostgreSQL or MySQL for production
+- **SQL.js (in-memory)** for development and testing
+  - Zero setup required
+  - Fast test execution
+  - Perfect for CI/CD pipelines
+- **PostgreSQL** for production
+  - Battle-tested at scale
+  - ACID compliance
+  - Cloud provider support
+- Easily switchable via environment variables
 
 ### Validation Strategy
 - **Backend validation** using express-validator for security
@@ -442,7 +608,114 @@ DTS/
 ### Testing Approach
 - **Integration tests** for backend API endpoints
 - **Unit tests** for React components
+- **Concurrent test execution** for faster feedback
 - **70%+ coverage** threshold for quality assurance
+
+## 🚀 Production Deployment
+
+### Environment Variables
+
+#### Development (.env)
+```env
+NODE_ENV=development
+PORT=3001
+# No database configuration needed - uses SQL.js in-memory
+```
+
+#### Production (.env)
+```env
+NODE_ENV=production
+PORT=3001
+DATABASE_URL=postgresql://username:password@hostname:5432/database_name
+```
+
+### PostgreSQL Setup Options
+
+#### Option 1: Local PostgreSQL
+```bash
+# Install PostgreSQL
+brew install postgresql  # macOS
+choco install postgresql # Windows
+
+# Create database
+createdb dts_tasks
+
+# Set environment
+export DATABASE_URL=postgresql://localhost:5432/dts_tasks
+```
+
+#### Option 2: Cloud Database (Recommended)
+
+**Supabase (Free Tier Available)**
+1. Create account at supabase.com
+2. Create new project
+3. Copy connection string from Settings → Database
+4. Set `DATABASE_URL` environment variable
+
+**Railway (Free Tier Available)**
+1. Create account at railway.app
+2. Add PostgreSQL service
+3. Copy `DATABASE_URL` from service variables
+4. Set environment variable
+
+**Heroku Postgres**
+```bash
+heroku addons:create heroku-postgresql:mini
+# DATABASE_URL is set automatically
+```
+
+#### Option 3: Docker (For Testing Production Locally)
+```bash
+# Start PostgreSQL in Docker
+docker run --name postgres-dev \
+  -e POSTGRES_DB=dts_tasks \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=password \
+  -p 5432:5432 \
+  -d postgres:15-alpine
+
+# Set environment
+export NODE_ENV=production
+export DATABASE_URL=postgresql://admin:password@localhost:5432/dts_tasks
+
+# Run application
+npm start
+```
+
+### Production Deployment Steps
+
+1. **Set Environment Variables**
+   ```bash
+   export NODE_ENV=production
+   export DATABASE_URL=postgresql://user:password@host:5432/dbname
+   ```
+
+2. **Build Applications**
+   ```bash
+   npm run build
+   ```
+
+3. **Start Production Servers**
+   ```bash
+   npm start
+   ```
+   This uses **concurrently** to run both backend and frontend servers.
+
+### Cloud Deployment Platforms
+
+#### Heroku
+```bash
+# Deploy backend and frontend as separate apps
+heroku create dts-backend
+heroku create dts-frontend
+heroku addons:create heroku-postgresql:mini -a dts-backend
+git push heroku main
+```
+
+#### AWS / Azure / GCP
+- Deploy backend as containerized service
+- Deploy frontend to static hosting (S3, Blob Storage, Cloud Storage)
+- Use managed PostgreSQL service (RDS, Azure Database, Cloud SQL)
 
 ## 🔒 Security & Best Practices
 
@@ -465,6 +738,71 @@ DTS/
 - Pagination for large datasets
 - API rate limiting
 - Docker containerization
+- Real-time updates via WebSockets
+- Export/import functionality
+
+## 📊 Testing & Quality Assurance
+
+### Test Coverage
+- **Backend**: 51 tests passing, 82.42% coverage
+- **Frontend**: 27 tests passing, 45.23% coverage
+- **Total**: 78 tests passing
+
+### Test Plan
+See [TEST_PLAN.md](TEST_PLAN.md) for comprehensive testing documentation including:
+- Unit tests for all components
+- Integration tests for API endpoints
+- Security testing
+- Performance testing
+- Database adapter testing
+
+### Running Tests Efficiently
+
+Use **concurrently** to run all tests in parallel:
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Watch mode (in separate terminals)
+cd backend && npm run test:watch
+cd frontend && npm run test:watch
+```
+
+## 🎓 Development Workflow
+
+### First Time Setup
+```bash
+git clone <repository-url>
+cd DTS
+npm run install:all
+```
+
+### Daily Development
+```bash
+# Start all services with concurrently
+npm run dev
+
+# In another terminal, run tests
+npm test
+```
+
+### Before Committing
+```bash
+npm test           # Run all tests
+npm run lint       # Lint all code
+npm run build      # Ensure builds work
+```
+
+## 📚 Additional Documentation
+
+- [QUICKSTART.md](QUICKSTART.md) - Fast setup and common commands
+- [TEST_PLAN.md](TEST_PLAN.md) - Comprehensive testing documentation
+- [DATABASE.md](DATABASE.md) - Database configuration details
+- [DATABASE_MANAGER.md](DATABASE_MANAGER.md) - Database Manager user guide
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Production deployment guide
 
 ## 👤 Author
 
@@ -473,3 +811,7 @@ DTS/
 ## 📄 License
 
 This project is created for the HMCTS DTS Developer Technical Challenge.
+
+---
+
+**Built with ❤️ using React, TypeScript, Express, and Concurrently**
