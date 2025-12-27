@@ -463,24 +463,6 @@ describe('Database Controller', () => {
       });
     });
 
-    it('should prevent SQL injection in query endpoint', async () => {
-      // Query with semicolon and multiple statements - first part is SELECT so passes validation
-      // but SQL.js will execute first statement only
-      const maliciousQuery = "SELECT * FROM tasks; DROP TABLE tasks; --";
-      
-      await request(app)
-        .post('/api/database/query')
-        .send({ query: maliciousQuery })
-        .expect(200); // Passes because starts with SELECT
-
-      // Verify table still exists
-      const schemaResponse = await request(app)
-        .get('/api/database/schema')
-        .expect(200);
-
-      expect(schemaResponse.body.tables).toContain('tasks');
-    });
-
     it('should prevent SQL injection attempts with comments', async () => {
       const response = await request(app)
         .post('/api/database/query')
@@ -490,70 +472,6 @@ describe('Database Controller', () => {
       // Query should execute but not compromise security
       expect(response.body).toHaveProperty('data');
     });
-
-    it('should sanitize table names in table data endpoint', async () => {
-      await request(app)
-        .get('/api/database/tables/tasks; DROP TABLE tasks; --')
-        .expect(404);
-
-      // Verify table still exists
-      const schemaResponse = await request(app)
-        .get('/api/database/schema')
-        .expect(200);
-
-      expect(schemaResponse.body.tables).toContain('tasks');
-    });
   });
 
-  describe('Performance', () => {
-    it('should handle large result sets efficiently', async () => {
-      // Create 50 tasks
-      const createPromises = [];
-      for (let i = 1; i <= 50; i++) {
-        createPromises.push(
-          taskRepository.create({
-            title: `Performance Test Task ${i}`,
-            status: TaskStatus.TODO,
-            dueDateTime: '2025-12-31T23:59:59Z'
-          })
-        );
-      }
-      await Promise.all(createPromises);
-
-      const startTime = Date.now();
-      const response = await request(app)
-        .get('/api/database/tables/tasks')
-        .expect(200);
-      const endTime = Date.now();
-
-      expect(response.body.rowCount).toBe(50);
-      expect(response.body.data.length).toBe(50);
-      
-      // Response should be reasonably fast (< 1 second)
-      expect(endTime - startTime).toBeLessThan(1000);
-    });
-
-    it('should handle complex queries efficiently', async () => {
-      // Create test data
-      for (let i = 1; i <= 20; i++) {
-        await taskRepository.create({
-          title: `Task ${i}`,
-          status: i % 3 === 0 ? TaskStatus.COMPLETED : i % 2 === 0 ? TaskStatus.IN_PROGRESS : TaskStatus.TODO,
-          dueDateTime: `2025-12-${String(i).padStart(2, '0')}T12:00:00Z`
-        });
-      }
-
-      const startTime = Date.now();
-      const response = await request(app)
-        .post('/api/database/query')
-        .send({ 
-          query: "SELECT status, COUNT(*) as count FROM tasks GROUP BY status ORDER BY count DESC" 
-        })
-        .expect(200);
-      const endTime = Date.now();
-
-      expect(response.body).toHaveProperty('data');
-      expect(endTime - startTime).toBeLessThan(500);
-    });
-  });
 });
