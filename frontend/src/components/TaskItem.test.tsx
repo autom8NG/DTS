@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TaskItem } from '../components/TaskItem';
 import { Task, TaskStatus } from '../types/task.types';
@@ -23,7 +24,7 @@ describe('TaskItem', () => {
 
     expect(screen.getByText('Test Task')).toBeInTheDocument();
     expect(screen.getByText('Test Description')).toBeInTheDocument();
-    expect(screen.getByText(/TO DO/i)).toBeInTheDocument();
+    expect(screen.getByText(/TODO/i)).toBeInTheDocument();
   });
 
   it('calls onUpdate when status button is clicked', () => {

@@ -1,9 +1,20 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
+// Mock the database service BEFORE importing
+jest.mock('../services/databaseService', () => ({
+  __esModule: true,
+  default: {
+    getSchema: jest.fn(),
+    getStats: jest.fn(),
+    getTableData: jest.fn(),
+    executeQuery: jest.fn(),
+    clearDatabase: jest.fn(),
+  },
+}));
+
 import { DatabaseManager } from './DatabaseManager';
 import databaseService from '../services/databaseService';
-
-// Mock the database service
-jest.mock('../services/databaseService');
 
 const mockDatabaseService = databaseService as jest.Mocked<typeof databaseService>;
 
@@ -39,10 +50,10 @@ describe('DatabaseManager', () => {
       render(<DatabaseManager />);
 
       await waitFor(() => {
-        expect(screen.getByText(/Statistics/i)).toBeInTheDocument();
-        expect(screen.getByText(/Schema/i)).toBeInTheDocument();
-        expect(screen.getByText(/Data Browser/i)).toBeInTheDocument();
-        expect(screen.getByText(/Query Console/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Statistics/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Schema/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Data Browser/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Query Console/i })).toBeInTheDocument();
       });
     });
 

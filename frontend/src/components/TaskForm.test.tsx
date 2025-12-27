@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { TaskForm } from '../components/TaskForm';
 import { TaskStatus } from '../types/task.types';
