@@ -13,4 +13,12 @@ export default {
     '!src/main.tsx',
     '!src/vite-env.d.ts',
   ],
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: {
+        jsx: 'react',
+        esModuleInterop: true,
+      },
+    }],
+  },
 };
