@@ -1,40 +1,44 @@
-import db from '../database/db';
+import { dbAdapter, dbPromise } from '../database/db';
 import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus } from '../types/task.types';
 
 export class TaskRepository {
   // Create a new task
-  create(taskData: CreateTaskDto): Task {
-    const stmt = db.prepare(`
-      INSERT INTO tasks (title, description, status, dueDateTime, createdAt, updatedAt)
-      VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
-    `);
-
+  async create(taskData: CreateTaskDto): Promise<Task> {
+    await dbPromise; // Ensure DB is initialized
+    
     const status = taskData.status || TaskStatus.TODO;
-    const info = stmt.run(
-      taskData.title,
-      taskData.description || null,
-      status,
-      taskData.dueDateTime
+    
+    const result = await dbAdapter.query(
+      `INSERT INTO tasks (title, description, status, dueDateTime, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))`,
+      [taskData.title, taskData.description || null, status, taskData.dueDateTime]
     );
 
-    return this.findById(info.lastInsertRowid as number)!;
+    const id = result.lastInsertId!;
+    return (await this.findById(id))!;
   }
 
   // Find task by ID
-  findById(id: number): Task | undefined {
-    const stmt = db.prepare('SELECT * FROM tasks WHERE id = ?');
-    return stmt.get(id) as Task | undefined;
+  async findById(id: number): Promise<Task | undefined> {
+    await dbPromise; // Ensure DB is initialized
+    
+    const result = await dbAdapter.query('SELECT * FROM tasks WHERE id = ?', [id]);
+    return result.rows[0] as Task | undefined;
   }
 
   // Find all tasks
-  findAll(): Task[] {
-    const stmt = db.prepare('SELECT * FROM tasks ORDER BY dueDateTime ASC');
-    return stmt.all() as Task[];
+  async findAll(): Promise<Task[]> {
+    await dbPromise; // Ensure DB is initialized
+    
+    const result = await dbAdapter.query('SELECT * FROM tasks ORDER BY dueDateTime ASC');
+    return result.rows as Task[];
   }
 
   // Update task
-  update(id: number, taskData: UpdateTaskDto): Task | undefined {
-    const existingTask = this.findById(id);
+  async update(id: number, taskData: UpdateTaskDto): Promise<Task | undefined> {
+    await dbPromise; // Ensure DB is initialized
+    
+    const existingTask = await this.findById(id);
     if (!existingTask) {
       return undefined;
     }
@@ -66,24 +70,31 @@ export class TaskRepository {
     updates.push("updatedAt = datetime('now')");
     values.push(id);
 
-    const stmt = db.prepare(`
-      UPDATE tasks SET ${updates.join(', ')} WHERE id = ?
-    `);
-
-    stmt.run(...values);
-    return this.findById(id);
+    await dbAdapter.query(
+      `UPDATE tasks SET ${updates.join(', ')} WHERE id = ?`,
+      values
+    );
+    
+    return await this.findById(id);
   }
 
   // Delete task
-  delete(id: number): boolean {
-    const stmt = db.prepare('DELETE FROM tasks WHERE id = ?');
-    const info = stmt.run(id);
-    return info.changes > 0;
+  async delete(id: number): Promise<boolean> {
+    await dbPromise; // Ensure DB is initialized
+    
+    const existingTask = await this.findById(id);
+    if (!existingTask) {
+      return false;
+    }
+
+    await dbAdapter.query('DELETE FROM tasks WHERE id = ?', [id]);
+    return true;
   }
 
   // Clear all tasks (for testing)
-  deleteAll(): void {
-    db.prepare('DELETE FROM tasks').run();
+  async deleteAll(): Promise<void> {
+    await dbPromise; // Ensure DB is initialized
+    await dbAdapter.query('DELETE FROM tasks');
   }
 }
 

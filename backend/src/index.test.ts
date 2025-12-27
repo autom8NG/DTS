@@ -1,12 +1,12 @@
 import request from 'supertest';
-import app from '../index';
-import taskRepository from '../repositories/task.repository';
-import { TaskStatus } from '../types/task.types';
+import app from './index.js';
+import taskRepository from './repositories/task.repository.js';
+import { TaskStatus } from './types/task.types.js';
 
 describe('Task API', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     // Clear database before each test
-    taskRepository.deleteAll();
+    await taskRepository.deleteAll();
   });
 
   describe('POST /api/tasks', () => {

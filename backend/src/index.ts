@@ -2,12 +2,17 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import taskRoutes from './routes/task.routes';
+import databaseRoutes from './routes/database.routes';
+import { dbPromise } from './database/db';
 
 // Load environment variables
 dotenv.config();
 
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
+
+// Wait for database to initialize
+await dbPromise;
 
 // Middleware
 app.use(cors());
@@ -27,6 +32,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // API routes
 app.use('/api/tasks', taskRoutes);
+app.use('/api/database', databaseRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

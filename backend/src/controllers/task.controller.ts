@@ -13,7 +13,7 @@ export class TaskController {
       }
 
       const taskData: CreateTaskDto = req.body;
-      const task = taskRepository.create(taskData);
+      const task = await taskRepository.create(taskData);
 
       return res.status(201).json({
         message: 'Task created successfully',
@@ -34,7 +34,7 @@ export class TaskController {
       }
 
       const id = parseInt(req.params.id);
-      const task = taskRepository.findById(id);
+      const task = await taskRepository.findById(id);
 
       if (!task) {
         return res.status(404).json({ error: 'Task not found' });
@@ -52,7 +52,7 @@ export class TaskController {
   // Get all tasks
   async getAllTasks(req: Request, res: Response) {
     try {
-      const tasks = taskRepository.findAll();
+      const tasks = await taskRepository.findAll();
 
       return res.status(200).json({
         data: tasks,
@@ -75,7 +75,7 @@ export class TaskController {
       const id = parseInt(req.params.id);
       const updateData: UpdateTaskDto = req.body;
 
-      const updatedTask = taskRepository.update(id, updateData);
+      const updatedTask = await taskRepository.update(id, updateData);
 
       if (!updatedTask) {
         return res.status(404).json({ error: 'Task not found' });
@@ -100,7 +100,7 @@ export class TaskController {
       }
 
       const id = parseInt(req.params.id);
-      const deleted = taskRepository.delete(id);
+      const deleted = await taskRepository.delete(id);
 
       if (!deleted) {
         return res.status(404).json({ error: 'Task not found' });
