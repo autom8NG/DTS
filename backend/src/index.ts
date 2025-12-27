@@ -11,8 +11,11 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
 
-// Wait for database to initialize
-await dbPromise;
+// Initialize database (handled asynchronously)
+dbPromise.catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
+});
 
 // Middleware
 app.use(cors());

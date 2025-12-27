@@ -183,11 +183,10 @@ async function createDatabaseAdapter(): Promise<DatabaseAdapter> {
 }
 
 // Initialize database
-let dbAdapter: DatabaseAdapter;
+let dbAdapter: DatabaseAdapter = null as any; // Will be initialized by dbPromise
 const dbPromise = createDatabaseAdapter().then(adapter => {
   dbAdapter = adapter;
   return adapter;
 });
 
 export { dbAdapter, dbPromise };
-export default dbAdapter;

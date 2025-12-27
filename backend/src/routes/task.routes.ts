@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import taskController from '../controllers/task.controller';
+import taskController from '../controllers/task.controller.js';
 import {
   createTaskValidation,
   updateTaskValidation,
   taskIdValidation,
-} from '../validators/task.validator';
+} from '../validators/task.validator.js';
 
 const router = Router();
 

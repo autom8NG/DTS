@@ -120,11 +120,11 @@ describe('Task API', () => {
 
     it('should return all tasks', async () => {
       // Create multiple tasks
-      const task1 = taskRepository.create({
+      await taskRepository.create({
         title: 'Task 1',
         dueDateTime: '2025-12-30T10:00:00Z',
       });
-      const task2 = taskRepository.create({
+      await taskRepository.create({
         title: 'Task 2',
         dueDateTime: '2025-12-31T10:00:00Z',
       });
@@ -142,7 +142,7 @@ describe('Task API', () => {
 
   describe('GET /api/tasks/:id', () => {
     it('should return a task by ID', async () => {
-      const task = taskRepository.create({
+      const task = await taskRepository.create({
         title: 'Test task',
         description: 'Test description',
         dueDateTime: '2025-12-31T23:59:59Z',
@@ -178,7 +178,7 @@ describe('Task API', () => {
 
   describe('PATCH /api/tasks/:id', () => {
     it('should update task status', async () => {
-      const task = taskRepository.create({
+      const task = await taskRepository.create({
         title: 'Test task',
         dueDateTime: '2025-12-31T23:59:59Z',
       });
@@ -193,7 +193,7 @@ describe('Task API', () => {
     });
 
     it('should update multiple fields', async () => {
-      const task = taskRepository.create({
+      const task = await taskRepository.create({
         title: 'Old title',
         dueDateTime: '2025-12-31T23:59:59Z',
       });
@@ -224,7 +224,7 @@ describe('Task API', () => {
     });
 
     it('should return 400 for invalid status', async () => {
-      const task = taskRepository.create({
+      const task = await taskRepository.create({
         title: 'Test task',
         dueDateTime: '2025-12-31T23:59:59Z',
       });
@@ -240,7 +240,7 @@ describe('Task API', () => {
 
   describe('DELETE /api/tasks/:id', () => {
     it('should delete a task', async () => {
-      const task = taskRepository.create({
+      const task = await taskRepository.create({
         title: 'Task to delete',
         dueDateTime: '2025-12-31T23:59:59Z',
       });
@@ -252,7 +252,7 @@ describe('Task API', () => {
       expect(response.body.message).toBe('Task deleted successfully');
 
       // Verify task is deleted
-      const getResponse = await request(app)
+      await request(app)
         .get(`/api/tasks/${task.id}`)
         .expect(404);
     });
